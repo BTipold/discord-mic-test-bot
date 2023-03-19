@@ -16,15 +16,19 @@ class MicTestBot:
         intents.voice_states = True
         intents.messages = True
         intents.message_content = True
-        self.TOKEN : str = 'MTA4NDU1NTc0MDA4NzMyMDYzOQ.GitPOd.w-lSbKIACyKdQJkz8Af7XhpjhLe-mJgKUs_8QU'
         client = discord.Client(intents=intents)
         self.client : discord.Client = client
         self.active_recordings : dict = {}
         self.message_handler = MessageHandler(client, lambda c: self.handle_command(c))
 
     # starts the bot service
-    def run(self):
-        self.client.run(self.TOKEN)
+    def run(self, secret_file="/data/discord-mic-test-bot/vault/secret"):
+        token = ''
+        with open('/data/discord-mic-test-bot/vault/secret', 'r') as file:
+            token = file.read()
+
+        if len(token) > 0:
+            self.client.run(token)
 
     # force disconnect all recordings
     async def cleanup(self):
@@ -68,5 +72,3 @@ class MicTestBot:
             await channel.send(message)
         except Exception as e:
             print(e)
-
-    
